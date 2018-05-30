@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,8 +18,10 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView mMovieListTextView;
-    String query = "popular";
+    private TextView mMovieListTextView;
+    private String query = "popular";
+    private ProgressBar mLoadingIndicator;
+    private TextView mErrorMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mMovieListTextView = (TextView) findViewById(R.id.tv_movie_names);
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+        mErrorMessage = (TextView) findViewById(R.id.tv_error_message);
+
         makeTheMovieDbQuery();
     }
 
@@ -35,7 +42,23 @@ public class MainActivity extends AppCompatActivity {
         new TheMovieDbQueryTask().execute(theMovieDbQueryUrl);
     }
 
+    private void showJsonDataResults(){
+        mErrorMessage.setVisibility(View.INVISIBLE);
+        mMovieListTextView.setVisibility(View.VISIBLE);
+    }
+
+    private void showErrorMessage(){
+        mMovieListTextView.setVisibility(View.INVISIBLE);
+        mErrorMessage.setVisibility(View.VISIBLE);
+    }
+
     public class TheMovieDbQueryTask extends AsyncTask<URL, Void, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+        }
+
         @Override
         protected String doInBackground(URL... urls) {
             URL queryUrl = urls[0];
@@ -50,8 +73,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String theMovieDbQueryResults) {
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (theMovieDbQueryResults != null && !theMovieDbQueryResults.equals("")){
+                showJsonDataResults();
                 mMovieListTextView.setText(theMovieDbQueryResults);
+            } else {
+                showErrorMessage();
             }
         }
     }
