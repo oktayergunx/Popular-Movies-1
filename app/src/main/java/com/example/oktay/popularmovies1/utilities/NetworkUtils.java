@@ -14,7 +14,7 @@ public class NetworkUtils {
     // https://api.themoviedb.org/3/movie/popular?api_key=****YOUR API KEY HERE****&language=en-US&page=1
     final static String THEMOVIEDB_BASE_URL = "https://api.themoviedb.org/3/movie";
     final static String PARAM_API_KEY = "api_key";
-    final static String apiKey = "d55366dfea5b056bf6590cf7ee93e247";
+    final static String apiKey = "REPLACE THIS TEXT WITH YOUR API KEY";
     final static String PARAM_LANGUAGE = "language";
     final static String language = "en-US";
 
