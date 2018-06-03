@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.oktay.popularmovies1.utilities.NetworkUtils;
+import com.example.oktay.popularmovies1.utilities.TheMovieDbJsonUtils;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,43 +24,56 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.tv_movie_names)
-    TextView mMovieListTextView;
+    private RecyclerView mRecyclerView;
+    private MovieAdapter mMovieAdapter;
+
     @BindView(R.id.tv_error_message)
     TextView mErrorMessage;
     @BindView(R.id.pb_loading_indicator)
     ProgressBar mLoadingIndicator;
 
-    private String query = "popular";
+    String query = "popular";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_movies);
+
         ButterKnife.bind(this);
 
-        makeTheMovieDbQuery();
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        //set the layout manager
+        mRecyclerView.setLayoutManager(layoutManager);
+        //changes in content shouldn't change the layout size
+        mRecyclerView.setHasFixedSize(true);
+
+        mMovieAdapter = new MovieAdapter();
+        //set movie adapter for recycler view
+        mRecyclerView.setAdapter(mMovieAdapter);
+
+        loadMovieData();
     }
 
-    private void makeTheMovieDbQuery() {
+    private void loadMovieData() {
         String theMovieDbQueryType = query;
-        URL theMovieDbQueryUrl = NetworkUtils.buildUrl(theMovieDbQueryType);
-        mMovieListTextView.setText(theMovieDbQueryUrl.toString());
-        new TheMovieDbQueryTask().execute(theMovieDbQueryUrl);
+        showJsonDataResults();
+        new FetchMovieTask().execute(theMovieDbQueryType);
     }
 
     private void showJsonDataResults() {
         mErrorMessage.setVisibility(View.INVISIBLE);
-        mMovieListTextView.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     private void showErrorMessage() {
-        mMovieListTextView.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.INVISIBLE);
         mErrorMessage.setVisibility(View.VISIBLE);
     }
 
-    public class TheMovieDbQueryTask extends AsyncTask<URL, Void, String> {
+    public class FetchMovieTask extends AsyncTask<String, Void, String[]> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -65,23 +81,34 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected String doInBackground(URL... urls) {
-            URL queryUrl = urls[0];
-            String theMovieDbQueryResults = null;
-            try {
-                theMovieDbQueryResults = NetworkUtils.getResponseFromHttpUrl(queryUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
+        protected String[] doInBackground(String... params) {
+            if (params.length == 0){
+                return null;
             }
-            return theMovieDbQueryResults;
+
+            String sortBy = params[0];
+            URL movieRequestUrl = NetworkUtils.buildUrl(sortBy);
+
+            try {
+                String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
+
+                String[] jsonMovieData
+                        = TheMovieDbJsonUtils.getMovieInformationsFromJson(MainActivity.this, jsonMovieResponse);
+
+                return jsonMovieData;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
 
         @Override
-        protected void onPostExecute(String theMovieDbQueryResults) {
+        protected void onPostExecute(String[] movieData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (theMovieDbQueryResults != null && !theMovieDbQueryResults.equals("")) {
+            if (movieData != null) {
                 showJsonDataResults();
-                mMovieListTextView.setText(theMovieDbQueryResults);
+                mMovieAdapter.setMovieData(movieData);
             } else {
                 showErrorMessage();
             }
@@ -93,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-
+    // TODO I didn't implement the step 46 in S03.01
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuItemThatWasSelected = item.getItemId();
@@ -103,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(context, textToShow, Toast.LENGTH_SHORT).show();
             // TODO 3 remove the toast message when you are done with it.
             query = "top_rated";
-            makeTheMovieDbQuery();
+            loadMovieData();
             return true;
         }
         return super.onOptionsItemSelected(item);
