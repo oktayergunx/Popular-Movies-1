@@ -5,8 +5,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.example.oktay.popularmovies1.utilities.NetworkUtils;
 import com.example.oktay.popularmovies1.utilities.TheMovieDbJsonUtils;
 
-import java.io.IOException;
 import java.net.URL;
 
 import butterknife.BindView;
@@ -44,7 +43,10 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        //how many columns can fit in one page. this method explained below.
+        int mNoOfColumns = calculateNoOfColumns(getApplicationContext());
+
+        GridLayoutManager layoutManager = new GridLayoutManager(this, mNoOfColumns);
         //set the layout manager
         mRecyclerView.setLayoutManager(layoutManager);
         //changes in content shouldn't change the layout size
@@ -134,6 +136,15 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //calculates how many columns can I fit in screen.
+    // Source: https://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns
+    public static int calculateNoOfColumns(Context context) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        int noOfColumns = (int) (dpWidth / 180);
+        return noOfColumns;
     }
 
 }

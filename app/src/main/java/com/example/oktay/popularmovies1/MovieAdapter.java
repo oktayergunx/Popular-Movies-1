@@ -41,7 +41,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public void onBindViewHolder(@NonNull MovieAdapterViewHolder holder, int position) {
         //set the movie for list item's position
         String movieToBind = mMovieData[position];
-        Picasso.get().load(movieToBind).into(holder.mMovieListImageView);
+        Picasso.get()
+                .load(movieToBind)
+                .placeholder(R.drawable.image_loading)
+                .error(R.drawable.image_not_found)
+                .into(holder.mMovieListImageView);
     }
 
     @Override
