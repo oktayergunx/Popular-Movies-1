@@ -2,19 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="5dp">
 
     <ImageView
         android:id="@+id/iv_movie_posters"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
-    <!-- this view is just a divider between list items. Probably going to remove it later on. -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#dadada"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp" />
 
 </LinearLayout>

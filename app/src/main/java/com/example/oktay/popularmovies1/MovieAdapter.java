@@ -42,7 +42,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         //set the movie for list item's position
         String movieToBind = mMovieData[position];
         Picasso.get().load(movieToBind).into(holder.mMovieListImageView);
-        //holder.mMovieListImageView.setText(movieToBind);
     }
 
     @Override
