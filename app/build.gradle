@@ -31,4 +31,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
+    //I had an error after I implement picasso, and the following implementations solve the problem.
+    implementation 'com.android.support:support-annotations:27.1.1'
+    implementation 'com.android.support:exifinterface:27.1.1'
 }
