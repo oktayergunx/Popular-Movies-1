@@ -1,6 +1,7 @@
 package com.example.oktay.popularmovies1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.oktay.popularmovies1.utilities.NetworkUtils;
 import com.example.oktay.popularmovies1.utilities.TheMovieDbJsonUtils;
@@ -22,7 +22,7 @@ import java.net.URL;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
     private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
@@ -52,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
         //changes in content shouldn't change the layout size
         mRecyclerView.setHasFixedSize(true);
 
-        mMovieAdapter = new MovieAdapter();
+        mMovieAdapter = new MovieAdapter(this);
+
         //set movie adapter for recycler view
         mRecyclerView.setAdapter(mMovieAdapter);
 
@@ -63,6 +64,15 @@ public class MainActivity extends AppCompatActivity {
         String theMovieDbQueryType = query;
         showJsonDataResults();
         new FetchMovieTask().execute(theMovieDbQueryType);
+    }
+
+    @Override
+    public void onClick(String movieDetail) {
+        Context context = this;
+        Class destinationClass = DetailActivity.class;
+        Intent intentToStartDetailActivity = new Intent(context, destinationClass);
+        intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, movieDetail);
+        startActivity(intentToStartDetailActivity);
     }
 
     private void showJsonDataResults() {
@@ -125,21 +135,31 @@ public class MainActivity extends AppCompatActivity {
     // TODO I didn't implement the step 46 in S03.01
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int menuItemThatWasSelected = item.getItemId();
-        if (menuItemThatWasSelected == R.id.popular) {
-            Context context = MainActivity.this;
-            String textToShow = "Popular Clicked";
-            Toast.makeText(context, textToShow, Toast.LENGTH_SHORT).show();
-            // TODO 3 remove the toast message when you are done with it.
+        int menuItemSelected = item.getItemId();
+
+        if (menuItemSelected == R.id.action_popular) {
+            query = "popular";
+            loadMovieData();
+            return true;
+        }
+
+        if (menuItemSelected == R.id.action_top_rated) {
             query = "top_rated";
             loadMovieData();
             return true;
         }
+
+        if(menuItemSelected == R.id.action_about){
+            Intent startAboutActivity = new Intent(this, AboutActivity.class);
+            startActivity(startAboutActivity);
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
     //calculates how many columns can I fit in screen.
-    // Source: https://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns
+    //Source: https://stackoverflow.com/questions/33575731/gridlayoutmanager-how-to-auto-fit-columns
     public static int calculateNoOfColumns(Context context) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;

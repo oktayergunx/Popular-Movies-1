@@ -17,8 +17,8 @@ public class TheMovieDbJsonUtils {
         final String TMDB_POSTER_PATH = "poster_path";
 
         String[] parsedMovieData = null;
-        //I've got the following codes from: https://www.codevoila.com/post/65/java-json-tutorial-and-example-json-java-orgjson#toc_5
-        //created a new movie class, I've also seen this from: https://www.youtube.com/watch?v=KSX4zIhiZlM
+        //I've got some help from: https://www.codevoila.com/post/65/java-json-tutorial-and-example-json-java-orgjson#toc_5
+        //and once again the amazing sunshine app.
 
         JSONObject movieJson = new JSONObject(json);
 

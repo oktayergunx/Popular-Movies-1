@@ -7,21 +7,38 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
-//I've went through Sunshine's RecyclerView. Following codes are taken from there.
-
+//I went through Sunshine's RecyclerView and Click Handlers.
+//Following codes are from Sunshine.
     private String[] mMovieData;
 
-    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder {
+    private final MovieAdapterOnClickHandler mClickHandler;
+
+    public MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
+        mClickHandler = clickHandler;
+    }
+
+    public interface MovieAdapterOnClickHandler {
+        void onClick(String movieDetail);
+    }
+
+    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final ImageView mMovieListImageView;
 
         public MovieAdapterViewHolder(View itemView) {
             super(itemView);
             mMovieListImageView = (ImageView) itemView.findViewById(R.id.iv_movie_posters);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            String movieDetail = mMovieData[adapterPosition];
+            mClickHandler.onClick(movieDetail);
         }
     }
 
