@@ -1,13 +1,15 @@
 package com.example.oktay.popularmovies1.utilities;
 import android.content.Context;
 
+import com.example.oktay.popularmovies1.model.Movie;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class TheMovieDbJsonUtils {
 
-    public static String[] getMovieInformationsFromJson(Context context, String json) throws JSONException {
+    public static Movie[] getMovieInformationsFromJson(Context context, String json) throws JSONException {
 
         final String TMDB_BASE_URL = "https://image.tmdb.org/t/p/";
         final String TMDB_POSTER_SIZE = "w500";
@@ -17,11 +19,10 @@ public class TheMovieDbJsonUtils {
         final String TMDB_POSTER_PATH = "poster_path";
         final String TMDB_TITLE = "title";
         final String TMDB_VOTE = "vote_average";
-        //hmm
         final String TMDB_OVERVIEW = "overview";
         final String TMDB_RELEASE_DATE = "release_date";
 
-        String[] parsedMovieData = null;
+//        String[] parsedMovieData = null;
         //I've got some help from: https://www.codevoila.com/post/65/java-json-tutorial-and-example-json-java-orgjson#toc_5
         //and once again the amazing sunshine app.
 
@@ -29,20 +30,38 @@ public class TheMovieDbJsonUtils {
 
         JSONArray movieArray = movieJson.getJSONArray(TMDB_RESULTS);
 
-        parsedMovieData = new String[movieArray.length()];
+        Movie[] movieResults = new Movie[movieArray.length()];
+
 
         for (int i = 0; i < movieArray.length(); i++){
             String poster_path, title, vote_average, overview, release_date;
 
-            JSONObject movieResults = movieArray.getJSONObject(i);
-            poster_path = movieResults.optString(TMDB_POSTER_PATH);
-            title = movieResults.optString(TMDB_TITLE);
-            vote_average = movieResults.optString(TMDB_VOTE);
-            overview = movieResults.optString(TMDB_OVERVIEW);
-            release_date = movieResults.optString(TMDB_RELEASE_DATE);
+            Movie movie = new Movie();
+//          movie[i]= new Movie();
 
-            parsedMovieData[i] = TMDB_BASE_URL + TMDB_POSTER_SIZE + poster_path;
+//          JSONObject movieResults = movieArray.getJSONObject(i);
+
+            poster_path = movieArray.getJSONObject(i).optString(TMDB_POSTER_PATH);
+            title = movieArray.getJSONObject(i).optString(TMDB_TITLE);
+            release_date = movieArray.getJSONObject(i).optString(TMDB_RELEASE_DATE);
+            vote_average = movieArray.getJSONObject(i).optString(TMDB_VOTE);
+            overview = movieArray.getJSONObject(i).optString(TMDB_OVERVIEW);
+
+//            title = movieResults.optString(TMDB_TITLE);
+//            release_date = movieResults.optString(TMDB_RELEASE_DATE);
+//            vote_average = movieResults.optString(TMDB_VOTE);
+//            overview = movieResults.optString(TMDB_OVERVIEW);
+
+            //setters
+            movie.setPoster(TMDB_BASE_URL + TMDB_POSTER_SIZE + poster_path);
+            movie.setTitle(title);
+            movie.setRelease(release_date);
+            movie.setRate(vote_average);
+            movie.setOverview(overview);
+
+            movieResults[i] = movie;
         }
-        return parsedMovieData;
+
+        return movieResults;
     }
 }

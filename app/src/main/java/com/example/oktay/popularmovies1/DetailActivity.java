@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.oktay.popularmovies1.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -16,7 +17,7 @@ public class DetailActivity extends AppCompatActivity {
 
     @BindView(R.id.iv_detail_movie_poster)
     ImageView mMoviePosterDisplay;
-    private String mMovieTitle;
+    private String mMovieTitle; //bunlar havada duruyor galiba, sil
     @BindView(R.id.tv_detail_title)
     TextView mMovieTitleDisplay;
     private String mMovieRate;
@@ -29,13 +30,24 @@ public class DetailActivity extends AppCompatActivity {
     @BindView(R.id.tv_plot_synopsis)
     TextView mMoviePlotSynopsisDisplay;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
         ButterKnife.bind(this);
+
+        Movie movie = new Movie();
+        String poster = movie.getPoster(); //?
+        String title = movie.getTitle();
+        String rate = movie.getRate();
+        String release = movie.getRelease();
+        String overview = movie.getOverview();
+
+        mMovieTitleDisplay.setText(title);
+        mMoviePlotSynopsisDisplay.setText(overview);
+        mMovieRateDisplay.setText(rate);
+        mMovieReleaseDisplay.setText(release);
 
         Intent intentThatStartedThisActivity = getIntent();
 

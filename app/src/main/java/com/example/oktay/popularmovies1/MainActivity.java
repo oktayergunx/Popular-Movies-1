@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.oktay.popularmovies1.model.Movie;
 import com.example.oktay.popularmovies1.utilities.NetworkUtils;
 import com.example.oktay.popularmovies1.utilities.TheMovieDbJsonUtils;
 
@@ -52,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         //changes in content shouldn't change the layout size
         mRecyclerView.setHasFixedSize(true);
 
-        mMovieAdapter = new MovieAdapter(this);
-
         //set movie adapter for recycler view
         mRecyclerView.setAdapter(mMovieAdapter);
 
@@ -67,11 +66,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     }
 
     @Override
-    public void onClick(String movieDetail) {
+    public void onClick(int adapterPosition) {
         Context context = this;
         Class destinationClass = DetailActivity.class;
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);
-        intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, movieDetail);
+        intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, adapterPosition);
         startActivity(intentToStartDetailActivity);
     }
 
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         mErrorMessage.setVisibility(View.VISIBLE);
     }
 
-    public class FetchMovieTask extends AsyncTask<String, Void, String[]> {
+    public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected Movie[] doInBackground(String... params) {
             if (params.length == 0){
                 return null;
             }
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             try {
                 String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
 
-                String[] jsonMovieData
+                Movie[] jsonMovieData
                         = TheMovieDbJsonUtils.getMovieInformationsFromJson(MainActivity.this, jsonMovieResponse);
 
                 return jsonMovieData;
@@ -116,15 +115,18 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         }
 
         @Override
-        protected void onPostExecute(String[] movieData) {
+        protected void onPostExecute(Movie[] movieData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieData != null) {
                 showJsonDataResults();
                 mMovieAdapter.setMovieData(movieData);
+                mMovieAdapter = new MovieAdapter(movieData,MainActivity.this);
+                mRecyclerView.setAdapter(mMovieAdapter);
             } else {
                 showErrorMessage();
             }
         }
+
     }
 
     @Override
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-    // TODO I didn't implement the step 46 in S03.01
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuItemSelected = item.getItemId();

@@ -8,21 +8,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.oktay.popularmovies1.model.Movie;
 import com.squareup.picasso.Picasso;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 //I went through Sunshine's RecyclerView and Click Handlers.
 //Following codes are from Sunshine.
-    private String[] mMovieData;
-
+    private Movie[] mMovieData;
     private final MovieAdapterOnClickHandler mClickHandler;
 
-    public MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
+    public MovieAdapter(Movie[] movie, MovieAdapterOnClickHandler clickHandler) {
+        mMovieData = movie;
         mClickHandler = clickHandler;
     }
 
     public interface MovieAdapterOnClickHandler {
-        void onClick(String movieDetail);
+        void onClick(int adapterPosition);
     }
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -37,8 +38,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            String movieDetail = mMovieData[adapterPosition];
-            mClickHandler.onClick(movieDetail);
+            //String movieDetail = mMovieData[adapterPosition];
+            mClickHandler.onClick(adapterPosition);
         }
     }
 
@@ -57,7 +58,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(@NonNull MovieAdapterViewHolder holder, int position) {
         //set the movie for list item's position
-        String movieToBind = mMovieData[position];
+        String movieToBind = mMovieData[position].getPoster();
         Picasso.get()
                 .load(movieToBind)
                 .placeholder(R.drawable.image_loading)
@@ -73,7 +74,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         return mMovieData.length;
     }
 
-    public void setMovieData(String[] movieData){
+    public void setMovieData(Movie[] movieData){
         mMovieData = movieData;
         notifyDataSetChanged();
     }
