@@ -22,7 +22,6 @@ public class TheMovieDbJsonUtils {
         final String TMDB_OVERVIEW = "overview";
         final String TMDB_RELEASE_DATE = "release_date";
 
-//        String[] parsedMovieData = null;
         //I've got some help from: https://www.codevoila.com/post/65/java-json-tutorial-and-example-json-java-orgjson#toc_5
         //and once again the amazing sunshine app.
 
@@ -37,20 +36,12 @@ public class TheMovieDbJsonUtils {
             String poster_path, title, vote_average, overview, release_date;
 
             Movie movie = new Movie();
-//          movie[i]= new Movie();
-
-//          JSONObject movieResults = movieArray.getJSONObject(i);
 
             poster_path = movieArray.getJSONObject(i).optString(TMDB_POSTER_PATH);
             title = movieArray.getJSONObject(i).optString(TMDB_TITLE);
             release_date = movieArray.getJSONObject(i).optString(TMDB_RELEASE_DATE);
             vote_average = movieArray.getJSONObject(i).optString(TMDB_VOTE);
             overview = movieArray.getJSONObject(i).optString(TMDB_OVERVIEW);
-
-//            title = movieResults.optString(TMDB_TITLE);
-//            release_date = movieResults.optString(TMDB_RELEASE_DATE);
-//            vote_average = movieResults.optString(TMDB_VOTE);
-//            overview = movieResults.optString(TMDB_OVERVIEW);
 
             //setters
             movie.setPoster(TMDB_BASE_URL + TMDB_POSTER_SIZE + poster_path);

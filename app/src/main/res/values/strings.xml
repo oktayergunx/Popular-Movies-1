@@ -10,6 +10,10 @@
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
     <string name="action_about">About</string>
+    <!--detail-->
+    <string name="label_rate">Rate: </string>
+    <string name="label_release_date">Release Date: </string>
+    <string name="label_overview">Overview: </string>
     <!-- about -->
     <string name="credits_title">About: Popular Movies Stage 1 | Credits </string>
     <string name="credits_program">Android Developer Nanodegree by Udacity and Google </string>

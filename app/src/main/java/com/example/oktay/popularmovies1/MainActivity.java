@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
+    private Movie[] jsonMovieData;
 
     @BindView(R.id.tv_error_message)
     TextView mErrorMessage;
@@ -69,8 +70,15 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
     public void onClick(int adapterPosition) {
         Context context = this;
         Class destinationClass = DetailActivity.class;
+
         Intent intentToStartDetailActivity = new Intent(context, destinationClass);
         intentToStartDetailActivity.putExtra(Intent.EXTRA_TEXT, adapterPosition);
+        intentToStartDetailActivity.putExtra("title", jsonMovieData[adapterPosition].getTitle());
+        intentToStartDetailActivity.putExtra("poster", jsonMovieData[adapterPosition].getPoster());
+        intentToStartDetailActivity.putExtra("rate", jsonMovieData[adapterPosition].getRate());
+        intentToStartDetailActivity.putExtra("release", jsonMovieData[adapterPosition].getRelease());
+        intentToStartDetailActivity.putExtra("overview", jsonMovieData[adapterPosition].getOverview());
+
         startActivity(intentToStartDetailActivity);
     }
 
@@ -103,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             try {
                 String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestUrl);
 
-                Movie[] jsonMovieData
+                jsonMovieData
                         = TheMovieDbJsonUtils.getMovieInformationsFromJson(MainActivity.this, jsonMovieResponse);
 
                 return jsonMovieData;
@@ -119,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (movieData != null) {
                 showJsonDataResults();
-                mMovieAdapter.setMovieData(movieData);
+                //mMovieAdapter.setMovieData(movieData);
                 mMovieAdapter = new MovieAdapter(movieData,MainActivity.this);
                 mRecyclerView.setAdapter(mMovieAdapter);
             } else {

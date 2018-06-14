@@ -38,7 +38,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            //String movieDetail = mMovieData[adapterPosition];
             mClickHandler.onClick(adapterPosition);
         }
     }
@@ -72,10 +71,5 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             return 0;
         }
         return mMovieData.length;
-    }
-
-    public void setMovieData(Movie[] movieData){
-        mMovieData = movieData;
-        notifyDataSetChanged();
     }
 }
